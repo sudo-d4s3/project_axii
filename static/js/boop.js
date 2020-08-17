@@ -19,7 +19,7 @@
     var output = "<div>" +
       "<p><strong>Welcome Traveler!</strong> This is Project Axii, a place for me to build puzzels and for you to solve them!</p>" +
       "<br/>" +
-      "<p>Your first goal is to find the first challenge.</p>" +
+      "<p>Your first goal is to find the password for the root account.</p>" +
       "<br/>" +
       "<p><em>Commands Available :</em><p>" +
       "<ul>" +
