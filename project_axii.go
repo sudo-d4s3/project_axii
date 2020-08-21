@@ -58,6 +58,27 @@ func level0(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
+func c341b271f5dba18dd4099435670a2c74(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "level")
+
+	session.Values["level0"] = true
+	session.Save(r, w)
+
+	http.Redirect(w, r, "/level1", http.StatusMovedPermanently)
+}
+func level1(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "level")
+
+	if auth, ok := session.Values["level0"].(bool); !ok || !auth {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		fmt.Fprintf(w, session.Values["True"].(string))
+		return
+	}
+
+	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/menu.html"))
+	tmpl.Execute(w, nil)
+}
+
 func main() {
 	//Logging
 	logfile, err := os.OpenFile(log_file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
@@ -75,12 +96,14 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", level0)
+	r.HandleFunc("/level1", level1)
+	r.HandleFunc("/c341b271f5dba18dd4099435670a2c74", c341b271f5dba18dd4099435670a2c74)
 
 	fs := http.FileServer(http.Dir("static/"))
 	r.PathPrefix("/static").Handler(http.StripPrefix("/static/", fs))
 
 	server := &http.Server{
-		Addr:         ":8080",
+		Addr:         ":8888",
 		Handler:      tracingHandler(nextRequestID)(loggingHandler(logger)(r)),
 		ErrorLog:     logger,
 		ReadTimeout:  10 * time.Second,
